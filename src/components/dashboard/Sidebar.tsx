@@ -74,6 +74,7 @@ export function Sidebar({ onLogout, userRole }: SidebarProps) {
       label: 'Security',
       subItems: [
         { id: 'visitor-tracking', label: 'Visitor Tracking', path: '/security/visitors' },
+        { id: 'security-protocols', label: 'Security Protocols', path: '/security/protocols' },
         { id: 'emergency', label: 'Emergency Management', path: '/security/emergency' },
       ]
     },
