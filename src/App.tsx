@@ -14,6 +14,7 @@ import { RequestTracking } from './components/requesttracking/RequestTracking';
 import VisitorApp from './components/securitymanagement/vistor/visitorapp';
 import ProtocolApp from './components/securitymanagement/protocol/protocolapp';
 import SecurityGuardApp from './components/securityguard/securityguardapp';
+import AnnouncementApp from './components/announcement/announcementapp';
 
 interface LoginFormProps {
   onLoginSuccess: (role: 'admin' | 'user' | 'security') => void;
@@ -65,6 +66,7 @@ function App() {
             <Route path="visitors" element={<VisitorApp />} />
             <Route path="protocols" element={<ProtocolApp />} />
           </Route>
+          <Route path="/announcement" element={<AnnouncementApp />} />
         </Routes>
       </AuthLayout>
     </Router>
