@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -6,19 +6,31 @@ import {
   Building2, 
   FileText,
   DollarSign,
-  LogOut 
+  LogOut,
+  UserCheck,
+  UserCog,
+  Bell,
+  ChevronDown,
+  ChevronRight,
+  UserCircle,
+  Wrench,
+  Calendar,
+  Users2,
+  Shield
 } from 'lucide-react';
 
 interface SidebarProps {
   onLogout: () => void;
+  userRole: 'admin' | 'user' | 'security' | null;
 }
 
-export function Sidebar({ onLogout }: SidebarProps) {
+export function Sidebar({ onLogout, userRole }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
-  const menuItems = [
+  const adminMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { id: 'residents', label: 'Resident Management', icon: Users, path: '/residents' },
     { id: 'financial', label: 'Financial Management', icon: DollarSign, subItems: [
@@ -31,7 +43,60 @@ export function Sidebar({ onLogout }: SidebarProps) {
       { id: 'create-complaint', label: 'Create Complaint', path: '/complaints/create' },
       { id: 'request-tracking', label: 'Request Tracking', path: '/complaints/requests' },
     ]},
+    { 
+      id: 'security',
+      icon: UserCog, 
+      label: 'Security Management',
+      subItems: [
+        { id: 'visitors', label: 'Visitor Logs', path: '/security/visitors' },
+        { id: 'protocols', label: 'Security Protocols', path: '/security/protocols' },
+      ]
+    },
+    { id: 'security-guard', label: 'Security Guard', icon: UserCheck, path: '/security-guard' },
+    { id: 'announcement', label: 'Announcement', icon: Bell, path: '/announcement' },
   ];
+
+  const userMenuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    { id: 'personal', label: 'Personal Details', icon: UserCircle, path: '/personal' },
+    { id: 'services', label: 'Services & Complaints', icon: Wrench, path: '/services' },
+    { id: 'events', label: 'Event Participation', icon: Calendar, path: '/events' },
+    { id: 'community', label: 'Community', icon: Users2, path: '/community' },
+    { id: 'payments', label: 'Payment Portal', icon: DollarSign, path: '/payments' },
+    { id: 'security', label: 'Security Protocol', icon: Shield, path: '/security-protocol' },
+  ];
+
+  const securityMenuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    { 
+      id: 'security',
+      icon: Shield, 
+      label: 'Security',
+      subItems: [
+        { id: 'visitor-tracking', label: 'Visitor Tracking', path: '/security/visitors' },
+        { id: 'emergency', label: 'Emergency Management', path: '/security/emergency' },
+      ]
+    },
+  ];
+
+  const menuItems = 
+    userRole === 'admin' 
+      ? adminMenuItems 
+      : userRole === 'security'
+        ? securityMenuItems
+        : userMenuItems;
+
+  const handleItemClick = (item: any) => {
+    if (item.path) {
+      navigate(item.path);
+      setExpandedItem(null);
+    } else if (item.subItems) {
+      setExpandedItem(expandedItem === item.id ? null : item.id);
+      if (expandedItem !== item.id) {
+        navigate(item.subItems[0].path);
+      }
+    }
+  };
 
   return (
     <div className="w-64 bg-white h-screen border-r border-gray-200 flex flex-col">
@@ -43,41 +108,44 @@ export function Sidebar({ onLogout }: SidebarProps) {
         <ul className="space-y-2">
           {menuItems.map((item) => (
             <li key={item.id}>
-              {item.subItems ? (
-                <div>
-                  <button className="w-full flex items-center px-6 py-3 text-sm text-gray-600">
-                    <item.icon className="w-5 h-5 mr-3" />
-                    {item.label}
-                  </button>
-                  <ul className="ml-12 space-y-2">
-                    {item.subItems.map((subItem) => (
-                      <li key={subItem.id}>
-                        <button
-                          onClick={() => navigate(subItem.path)}
-                          className={`w-full text-left px-4 py-2 text-sm ${
-                            currentPath === subItem.path
-                              ? 'text-orange-600'
-                              : 'text-gray-600 hover:text-gray-900'
-                          }`}
-                        >
-                          {subItem.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <button
-                  onClick={() => navigate(item.path)}
-                  className={`w-full flex items-center px-6 py-3 text-sm ${
-                    currentPath === item.path
-                      ? 'text-orange-600'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
+              <button
+                onClick={() => handleItemClick(item)}
+                className={`w-full flex items-center justify-between px-6 py-3 text-sm ${
+                  (item.path && currentPath.startsWith(item.path)) || 
+                  (item.subItems?.some(sub => currentPath.startsWith(sub.path)))
+                    ? 'text-orange-600'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <div className="flex items-center">
                   <item.icon className="w-5 h-5 mr-3" />
                   {item.label}
-                </button>
+                </div>
+                {item.subItems && (
+                  expandedItem === item.id ? 
+                    <ChevronDown className="w-4 h-4" /> : 
+                    <ChevronRight className="w-4 h-4" />
+                )}
+              </button>
+              
+              {item.subItems && expandedItem === item.id && (
+                <ul className="ml-12 space-y-2 mt-2">
+                  {item.subItems.map((subItem) => (
+                    <li key={subItem.id}>
+                      <button
+                        onClick={() => navigate(subItem.path)}
+                        className={`w-full text-left px-4 py-2 text-sm flex items-center ${
+                          currentPath === subItem.path
+                            ? 'text-orange-600'
+                            : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                      >
+                        {subItem.icon && <subItem.icon className="w-4 h-4 mr-2" />}
+                        {subItem.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               )}
             </li>
           ))}

@@ -13,9 +13,10 @@ import ProfileEdit from '../editprofile/ProfileEdit';
 
 interface DashboardProps {
   onLogout: () => void;
+  userRole: 'admin' | 'user' | 'security' | null;
 }
 
-export function Dashboard({ onLogout }: DashboardProps) {
+export const Dashboard: React.FC<DashboardProps> = ({ onLogout, userRole }) => {
   const [activeMenuItem, setActiveMenuItem] = useState('dashboard');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);

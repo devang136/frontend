@@ -11,20 +11,23 @@ import  LoginForm  from './components/LoginForm';
 import { AuthLayout } from './components/layout/AuthLayout';
 
 interface LoginFormProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (role: 'admin' | 'user' | 'security') => void;
   onForgotPassword: () => void;
   onRegister: () => void;
 }
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<'admin' | 'user' | 'security' | null>(null);
 
-  const handleLogin = () => {
+  const handleLogin = (role: 'admin' | 'user' | 'security') => {
     setIsAuthenticated(true);
+    setUserRole(role);
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    setUserRole(null);
   };
 
   if (!isAuthenticated) {
@@ -39,10 +42,18 @@ function App() {
 
   return (
     <Router>
-      <AuthLayout onLogout={handleLogout}>
+      <AuthLayout onLogout={handleLogout} userRole={userRole}>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" />} />
-          <Route path="/dashboard" element={<Dashboard onLogout={handleLogout} />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <Dashboard 
+                onLogout={handleLogout} 
+                userRole={userRole} 
+              />
+            } 
+          />
           <Route path="/residents" element={<ResidentManagement />} />
           <Route path="/financial">
             <Route path="income" element={<FinancialIncome />} />

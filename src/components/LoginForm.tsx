@@ -4,7 +4,7 @@ import { Eye, EyeOff } from 'lucide-react';
 interface LoginFormProps {
   onForgotPassword: () => void;
   onRegister: () => void;
-  onLoginSuccess: () => void;
+  onLoginSuccess: (role: 'admin' | 'user' | 'security') => void;
 }
 
 interface LoginFormData {
@@ -52,10 +52,15 @@ export default function LoginForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      // Check for admin credentials
+      // Check for admin and user credentials
       if (formData.emailOrPhone === 'admin@gmail.com' && formData.password === 'asdasd') {
-        // Redirect to dashboard
-        onLoginSuccess();
+        // Admin login
+        onLoginSuccess('admin');
+      } else if (formData.emailOrPhone === 'user@gmail.com' && formData.password === 'asdasd') {
+        // User login
+        onLoginSuccess('user');
+      } else if (formData.emailOrPhone === 'security@gmail.com' && formData.password === 'asdasd') {
+        onLoginSuccess('security');
       } else {
         setErrors({
           emailOrPhone: 'Invalid credentials',

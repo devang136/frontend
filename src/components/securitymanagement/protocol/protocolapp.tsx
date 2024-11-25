@@ -1,5 +1,4 @@
 import React from 'react';
-import Sidebar from './protocolSidebar';
 import Header from './protocolHeader';
 import SecurityProtocolTable from './SecurityProtocolTable';
 import ProtocolModal from './ProtocolModal';
