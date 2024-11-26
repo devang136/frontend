@@ -66,7 +66,8 @@ export function Sidebar({ onLogout, userRole }: SidebarProps) {
       label: 'Security Management',
       subItems: [
         { id: 'visitors', label: 'Visitor Logs', path: '/security/visitors' },
-        { id: 'protocols', label: 'Security Protocols', path: '/security/protocols' },
+        { id: 'protocols', label: 'Security Protocols', path: '/security/protocol' },
+       
       ]
     },
     { id: 'security-guard', label: 'Security Guard', icon: Shield, path: '/security-guard' },
@@ -88,22 +89,29 @@ export function Sidebar({ onLogout, userRole }: SidebarProps) {
         { id: 'discussions', label: 'Community Discussions', path: '/community/discussions' }
       ]
     },
-    { id: 'payments', label: 'Payment Portal', icon: DollarSign, path: '/payments' },
+    { 
+      id: 'payments', 
+      label: 'Payment Portal', 
+      icon: DollarSign, 
+      subItems: [
+        { id: 'maintenance-invoices', label: 'Maintenance Invoices', path: '/payments/maintenance', icon: FileText },
+        { id: 'other-invoices', label: 'Other Income Invoices', path: '/payments/other', icon: FileText }
+      ]
+    },
     { id: 'security', label: 'Security Protocol', icon: Shield, path: '/security-protocol' },
   ];
 
   const securityMenuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    
     { 
       id: 'security',
       icon: Shield, 
       label: 'Security',
       subItems: [
-        { id: 'visitor-tracking', label: 'Visitor Tracking', path: '/security/visitors' },
-        { id: 'security-protocols', label: 'Security Protocols', path: '/security/protocols' },
-        { id: 'emergency', label: 'Emergency Management', path: '/security/emergency' },
+        { id: 'visitor-tracking', label: 'Visitor Tracking', path: '/security/visitors', icon: Users },
+        { id: 'emergency', label: 'Emergency Management', path: '/security/emergency', icon: Bell }
       ]
-    },
+    }
   ];
 
   const menuItems = 
