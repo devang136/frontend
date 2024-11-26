@@ -19,18 +19,19 @@ import CommunityPolls from './components/community/polls/CommunityPolls';
 import CommunityDiscussions from './components/community/discussions/CommunityDiscussions';
 import { MaintenanceInvoices } from './components/financialman/payments/maintenance/MaintenanceInvoices';
 import { OtherInvoices } from './components/financialman/payments/other/OtherInvoices';
-import EmergencyApp from './components/emergency/EmergencyApp';
 import SecurityProtocol from './components/securitymanagement/protocol/SecurityProtocol';
-
-interface LoginFormProps {
-  onLoginSuccess: (role: 'admin' | 'user' | 'security') => void;
-  onForgotPassword: () => void;
-  onRegister: () => void;
-}
+import RegistrationForm from './components/RegistrationForm';
+import ForgotPassword from './components/ForgotPassword';
+import SecuritySideLogicApp from './components/securitysidelogic/securitysidelogicApp';
+import VisitorTrackingApp from './components/securitysidelogic/visitortracking/src/visitortrackingApp';
+import { SecurityProtocolRoute } from './components/usersidelogic/securityprotocol/SecurityProtocolRoute';
+import { EventParticipationRoute } from './components/usersidelogic/eventparticipation/EventParticipationRoute';
+import { ServiceComplaintRoute } from './components/usersidelogic/servicecomplaint/ServiceComplaintRoute';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<'admin' | 'user' | 'security' | null>(null);
+  const [currentView, setCurrentView] = useState<'login' | 'register' | 'forgot-password'>('login');
 
   const handleLogin = (role: 'admin' | 'user' | 'security') => {
     setIsAuthenticated(true);
@@ -43,13 +44,27 @@ function App() {
   };
 
   if (!isAuthenticated) {
-    return (
-      <LoginForm 
-        onLoginSuccess={handleLogin}
-        onForgotPassword={() => {}}
-        onRegister={() => {}}
-      />
-    );
+    if (currentView === 'login') {
+      return (
+        <LoginForm 
+          onLoginSuccess={handleLogin}
+          onForgotPassword={() => setCurrentView('forgot-password')}
+          onRegister={() => setCurrentView('register')}
+        />
+      );
+    } else if (currentView === 'register') {
+      return (
+        <RegistrationForm 
+          onBackToLogin={() => setCurrentView('login')}
+        />
+      );
+    } else {
+      return (
+        <ForgotPassword 
+          onBackToLogin={() => setCurrentView('login')}
+        />
+      );
+    }
   }
 
   return (
@@ -70,8 +85,13 @@ function App() {
           <Route path="/security-guard" element={<SecurityGuardApp />} />
           <Route path="/security">
             <Route path="visitors" element={<VisitorApp />} />
-            <Route path="emergency" element={<EmergencyApp />} />
             <Route path="protocol" element={<SecurityProtocol />} />
+            <Route path="emergency" element={
+              userRole === 'security' ? 
+              <SecuritySideLogicApp /> : 
+              <Navigate to="/dashboard" />
+            } />
+            <Route path="visitor-tracking" element={<VisitorTrackingApp />} />
           </Route>
           <Route path="/announcement" element={<AnnouncementApp />} />
           <Route path="/community">
@@ -81,6 +101,30 @@ function App() {
           </Route>
           <Route path="/payments/maintenance" element={<MaintenanceInvoices />} />
           <Route path="/payments/other" element={<OtherInvoices />} />
+          <Route 
+            path="/security-protocol" 
+            element={
+              userRole === 'user' ? 
+              <SecurityProtocolRoute /> : 
+              <Navigate to="/dashboard" />
+            } 
+          />
+          <Route 
+            path="/events" 
+            element={
+              userRole === 'user' ? 
+              <EventParticipationRoute /> : 
+              <Navigate to="/dashboard" />
+            } 
+          />
+          <Route 
+            path="/service-complaint" 
+            element={
+              userRole === 'user' ? 
+              <ServiceComplaintRoute /> : 
+              <Navigate to="/dashboard" />
+            } 
+          />
         </Routes>
       </AuthLayout>
     </Router>
